@@ -1,0 +1,58 @@
+name: Purge jsDelivr Cache
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "showcase.json"
+      - "traffic.json"
+      - "wall.json"
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Get changed files
+        id: changed
+        uses: tj-actions/changed-files@v47
+        with:
+          files: |
+            showcase.json
+            traffic.json
+            wall.json
+
+      - name: Purge changed files from jsDelivr
+        if: steps.changed.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          for file in $ALL_CHANGED_FILES; do
+            PURGE_URL="https://purge.jsdelivr.net/gh/las-nish/895070@main/$file"
+
+            echo "Purging: $PURGE_URL"
+
+            HTTP_CODE=$(curl \
+              --silent \
+              --show-error \
+              --output /dev/null \
+              --write-out "%{http_code}" \
+              "$PURGE_URL")
+
+            echo "HTTP status: $HTTP_CODE"
+
+            if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+              echo "Successfully purged $file"
+            else
+              echo "Failed to purge $file"
+              exit 1
+            fi
+
+            sleep 1
+          done

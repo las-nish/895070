@@ -1,0 +1,14 @@
+RAW FILE REPOSITORY FOR 895070
+
+These files are used directly on the 895070.com website and are automatically
+generated as part of the platform’s data pipeline.
+
+- The Showcase JSON file is generated from user requests submitted through
+  the Google Form provided on the website.
+- The Traffic JSON file is generated using data collected from external
+  services.
+- The Wall JSON file is generated from data scraped and analyzed by our
+  internal agents.
+
+Approximately 99% of the overall process is automated. However, all data
+is reviewed and verified by a human before it is published.
